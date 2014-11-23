@@ -1,5 +1,5 @@
 /*
-  clear && rm -f *.java *.class && javacc calculator.jj && clear && javac *.java && echo "1 + 2" | java Calculator
+  clear && rm -f *.java *.class && javacc calculator.jj && clear && javac *.java && cat file.gamma | java Calculator
 */
 
 options {
@@ -10,16 +10,25 @@ PARSER_BEGIN(Calculator)
 
 public class Calculator {
 
-  public static void main(String args[]) throws ParseException, TokenMgrError {
-    Calculator interpreter = new Calculator(System.in);
-    interpreter.Start();
-  }
+    final static String Version = "0.0.1";
 
+    public static void main(String args[]) throws ParseException, TokenMgrError {
+        Calculator interpreter = new Calculator(System.in);
+        interpreter.Start();
+    }
 }
 
 PARSER_END(Calculator)
 
 SKIP: { " " | "\t" | "\r" }
+
+SKIP: {
+    "/*": multilinecomment
+}
+
+<multilinecomment> SKIP: {
+    "*/": DEFAULT | <~[]>
+}
 
 TOKEN: {
   <NUMBER:   <DIGITS>
